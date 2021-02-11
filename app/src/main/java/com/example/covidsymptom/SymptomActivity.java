@@ -1,0 +1,101 @@
+package com.example.covidsymptom;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.RatingBar;
+import android.widget.Spinner;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.HashMap;
+import java.util.List;
+
+public class SymptomActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, RatingBar.OnRatingBarChangeListener {
+    private HashMap<String, Float> symptoms;
+    private RatingBar simpleRatingBar;
+    private Spinner spinner;
+    private int spinnerPosition;
+    private ImageButton deleteButton;
+    private PatientDataModel symptom;
+    private DataBaseHelper dataBaseHelper;
+    private ListView signList;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_symptom);
+
+        spinner = findViewById(R.id.spinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.symptoms_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+
+        symptoms = new HashMap<String, Float>();
+        simpleRatingBar = findViewById(R.id.simpleRatingBar);
+        simpleRatingBar.setOnRatingBarChangeListener(this);
+
+        deleteButton = findViewById(R.id.deleteButton);
+
+        dataBaseHelper = new DataBaseHelper(SymptomActivity.this);
+        signList = findViewById(R.id.sign_list);
+        this.updateList();
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        spinnerPosition = position;
+        String item = (String) spinner.getItemAtPosition(spinnerPosition);
+        if (symptoms.get(item) != null) {
+            simpleRatingBar.setRating(symptoms.get(item));
+        } else {
+            simpleRatingBar.setRating(0);
+        }
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    @Override
+    public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+        String item = (String) spinner.getItemAtPosition(spinnerPosition);
+        if (rating > 0) {
+            symptoms.put(item, rating);
+            symptom = new PatientDataModel(item, rating);
+            dataBaseHelper.addOne(symptom);
+        } else if (symptoms.get(item) != null) {
+            symptoms.remove(item);
+            dataBaseHelper.deleteOne(new PatientDataModel(item, 0));
+        }
+        deleteButton.setVisibility(rating > 0 ? View.VISIBLE : View.INVISIBLE);
+        this.updateList();
+    }
+
+    public void removeRating(View view) {
+        simpleRatingBar.setRating(0);
+    }
+
+    public void uploadSymptoms(View view) {
+        for (String i : symptoms.keySet()) {
+            dataBaseHelper.addOne(symptom);
+        }
+        this.updateList();
+    }
+
+    private void updateList() {
+        // Show the list
+        List<PatientDataModel> allSymptoms = dataBaseHelper.getAll();
+        for (int i = 0; i < allSymptoms.size(); i++) {
+            symptoms.put(allSymptoms.get(i).getSign(), allSymptoms.get(i).getValue());
+        }
+        ArrayAdapter symptoms = new ArrayAdapter<PatientDataModel>(SymptomActivity.this, android.R.layout.simple_list_item_1, allSymptoms);
+        signList.setAdapter(symptoms);
+    }
+}

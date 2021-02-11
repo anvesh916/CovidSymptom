@@ -1,0 +1,3 @@
+include ':OpenCV412'
+include ':app'
+rootProject.name = "Covid Symptom"

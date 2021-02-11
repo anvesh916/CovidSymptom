@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:opencv="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+<!--    <org.opencv.android.JavaCameraView-->
+<!--        android:id="@+id/camera_preview"-->
+<!--        android:layout_width="129dp"-->
+<!--        android:layout_height="52dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/video_preview"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/video_preview"-->
+<!--        app:layout_constraintHorizontal_bias="0.507"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/video_preview"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/video_preview"-->
+<!--        app:layout_constraintVertical_bias="0.497"-->
+<!--        opencv:camera_id="any"-->
+<!--        opencv:show_fps="true" />-->
+
+    <VideoView
+        android:id="@+id/video_preview"
+        android:layout_width="322dp"
+        android:layout_height="385dp"
+        app:layout_constraintBottom_toTopOf="@+id/heartRateText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.8" />
+
+    <TextView
+        android:id="@+id/respiratoryText"
+        android:layout_width="320dp"
+        android:layout_height="26dp"
+        android:layout_marginBottom="12dp"
+        android:text="Measure not taken"
+        app:layout_constraintBottom_toTopOf="@+id/respiratoryRateButton"
+        app:layout_constraintEnd_toEndOf="@+id/heartRateButton"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/heartRateButton" />
+
+    <Button
+        android:id="@+id/logSymptoms"
+        android:layout_width="169dp"
+        android:layout_height="49dp"
+        android:layout_marginStart="32dp"
+        android:onClick="navToSymptomActivity"
+        android:text="Log Symptoms"
+        app:layout_constraintBottom_toTopOf="@+id/video_preview"
+        app:layout_constraintEnd_toStartOf="@+id/upload"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/heartRateButton"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:onClick="measureHeartRate"
+        android:text="Measure Heart Rate"
+        app:layout_constraintBottom_toTopOf="@+id/respiratoryText"
+        app:layout_constraintEnd_toEndOf="@+id/heartRateText"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/heartRateText" />
+
+    <Button
+        android:id="@+id/respiratoryRateButton"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="44dp"
+        android:onClick="measureRespiratoryRate"
+        android:text="Measure Respiratory Rate"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/respiratoryText"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/respiratoryText" />
+
+    <TextView
+        android:id="@+id/heartRateText"
+        android:layout_width="320dp"
+        android:layout_height="26dp"
+        android:layout_marginBottom="12dp"
+        android:text="Measure not taken"
+        app:layout_constraintBottom_toTopOf="@+id/heartRateButton"
+        app:layout_constraintEnd_toEndOf="@+id/video_preview"
+        app:layout_constraintHorizontal_bias="0.527"
+        app:layout_constraintStart_toStartOf="@+id/video_preview" />
+
+    <Button
+        android:id="@+id/upload"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:onClick="uploadSigns"
+        android:text="Upload Signs"
+        app:backgroundTint="#4CAF50"
+        app:layout_constraintBottom_toTopOf="@+id/video_preview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/stopHRMeasuring"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:onClick="stopHRMeasurement"
+        android:text="Stop Measurement"
+        android:visibility="invisible"
+        app:backgroundTint="#E53935"
+        app:layout_constraintBottom_toBottomOf="@+id/heartRateButton"
+        app:layout_constraintEnd_toEndOf="@+id/heartRateButton"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/heartRateButton"
+        app:layout_constraintTop_toTopOf="@+id/heartRateButton"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/stopRRMeasuring"
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:onClick="stopRRMeasurement"
+        android:text="Stop Measurement"
+        android:visibility="invisible"
+        app:backgroundTint="#E53935"
+        app:layout_constraintBottom_toBottomOf="@+id/respiratoryRateButton"
+        app:layout_constraintEnd_toEndOf="@+id/respiratoryRateButton"
+        app:layout_constraintStart_toStartOf="@+id/respiratoryRateButton"
+        app:layout_constraintTop_toTopOf="@+id/respiratoryRateButton"
+        app:layout_constraintVertical_bias="1.0" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
