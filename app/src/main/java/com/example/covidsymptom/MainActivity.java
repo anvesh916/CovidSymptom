@@ -29,7 +29,7 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.OpenCVLoader;
 
 import java.io.File;
-import java.util.concurrent.CompletableFuture;
+
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MyMainActivity";
@@ -42,8 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private Intent respirationService;
     boolean hasCameraFlash = false;
     HeartRateTask hrt;
-//    JavaCameraView cameraView;
-//    Mat mRGBA, mRGBAT;
+
 
     BaseLoaderCallback baseLoaderCallback = new BaseLoaderCallback(this) {
         @Override
@@ -72,25 +71,10 @@ public class MainActivity extends AppCompatActivity {
         ResultReceiver resultReceiver = new RespirationResultReceiver(null);
         respirationService.putExtra(Intent.EXTRA_RESULT_RECEIVER, resultReceiver);
 
-        //Heart rate service
-//        cameraView = findViewById(R.id.camera_preview);
-//        cameraView.setCvCameraViewListener(this);
-//        cameraView.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_BACK);
-//        cameraView.setCameraPermissionGranted();
-//        cameraView.setMaxFrameSize(1000, 1200);
-
         hasCameraFlash = getPackageManager().
                 hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
     }
 
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-//        if (cameraView != null) {
-//            cameraView.disableView();
-//        }
-    }
 
     @Override
     protected void onResume() {
@@ -111,9 +95,6 @@ public class MainActivity extends AppCompatActivity {
     public void measureHeartRate(View view) {
         this.setParametersForHR("Measurement Started", false);
         this.preInvokeCamera();
-        //cameraView.setVisibility(SurfaceView.VISIBLE);
-        // cameraView.enableView();
-        // cameraView.setFlashLightVisibility(true);
     }
 
     private void preInvokeCamera() {
@@ -137,8 +118,7 @@ public class MainActivity extends AppCompatActivity {
             // Check if the request was granted or denied
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // The request was granted -> tell the camera view
-//                cameraView.setCameraPermissionGranted();
+
                 this.startRecording();
             } else {
                 // The request was denied -> tell the user and exit the application
@@ -179,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startCalculation() {
-        this.setParametersForHR("Video Recorded", true);
+        this.setParametersForHR("Video Recorded", false);
 
         // Set video in the media player
         MediaController m = new MediaController(this);
@@ -222,9 +202,6 @@ public class MainActivity extends AppCompatActivity {
     public void stopHRMeasurement(View view) {
         this.setParametersForHR("Measurement Cancelled", true);
         hrt.cancel(true);
-        //cameraView.setVisibility(SurfaceView.INVISIBLE);
-        // cameraView.disableView();
-        //  cameraView.setFlashLightVisibility(false);
     }
 
     void setParametersForHR(String displayText, boolean isDone) {
@@ -262,43 +239,11 @@ public class MainActivity extends AppCompatActivity {
     public void uploadSigns(View view) {
     }
 
-//    private void setFlashLightVisibility(boolean isVisible) {
-//        CameraManager cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
-//        if (!hasCameraFlash) {
-//            Toast.makeText(this, "Flash not available.",
-//                    Toast.LENGTH_LONG).show();
-//            return;
-//        }
-//        try {
-//            String cameraId = cameraManager.getCameraIdList()[0];
-//            cameraManager.setTorchMode(cameraId, isVisible);
-//        } catch (CameraAccessException e) {
-//            System.out.println("Unable to turn on the camera");
-//        }
-//    }
-//    @Override
-//    public void onCameraViewStarted(int width, int height) {
-//        mRGBA = new Mat(height, width, CvType.CV_8UC4);
-//    }
-//
-//    @Override
-//    public void onCameraViewStopped() {
-//        mRGBA.release();
-//    }
-//    @Override
-//    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-//        mRGBA = inputFrame.rgba();
-//        return mRGBA;
-//    }
-
 
     @Override
     protected void onDestroy() {
         stopService(respirationService);
         super.onDestroy();
-//        if (cameraView != null) {
-//            cameraView.disableView();
-//        }
     }
 
 
