@@ -4,7 +4,9 @@ package com.example.covidsymptom;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -29,6 +31,7 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.OpenCVLoader;
 
 import java.io.File;
+import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -36,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int VIDEO_CAPTURE = 1;
     public static final int CAMERA_PERMISSION_REQUEST_CODE = 1996;
     public static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 112;
+    public static final String FILE_NAME = "myvideo.mp4";
 
     private Uri uriForFile;
     private Intent symptomActivity;
@@ -95,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
     public void measureHeartRate(View view) {
         this.setParametersForHR("Measurement Started", false);
         this.preInvokeCamera();
+//        this.startCalculation();
     }
 
     private void preInvokeCamera() {
@@ -134,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void startRecording() {
         File videoPath = getExternalFilesDir(Environment.getStorageDirectory().getAbsolutePath());
-        File mediaFile = new File(videoPath, "myvideo.mp4");
+        File mediaFile = new File(videoPath, FILE_NAME);
         uriForFile = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", mediaFile);
 
         Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
@@ -167,8 +172,8 @@ public class MainActivity extends AppCompatActivity {
         videoView.setMediaController(m);
         videoView.setVideoURI(uriForFile);
 
-         hrt = new HeartRateTask();
-        hrt.execute();
+        hrt = new HeartRateTask();
+        hrt.execute(uriForFile);
 
     }
 
@@ -177,8 +182,28 @@ public class MainActivity extends AppCompatActivity {
         protected Float doInBackground(Uri... url) {
 
             try {
+
+                File videoPath = getExternalFilesDir(Environment.getStorageDirectory().getAbsolutePath());
+                File videoFile = new File(videoPath, FILE_NAME);
+
+                Uri videoFileUri = Uri.parse(videoFile.toString());
+
+                ArrayList<Bitmap> rev = new ArrayList<Bitmap>();
+
+                MediaPlayer mp = MediaPlayer.create(getBaseContext(), videoFileUri);
+
+                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                retriever.setDataSource(videoFile.getAbsolutePath());
+
+                int millis = mp.getDuration(); //milli seconds
+                for (int i = 1000000; i < millis * 1000; i += 1000000) {
+                    Bitmap bitmap = retriever.getFrameAtTime(i, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+                    rev.add(bitmap);
+                }
+
+
                 for (int i = 0; i < 20; i++) {
-                    onProgressUpdate(i*5);
+                    onProgressUpdate(i * 5);
                     Thread.sleep(500);
                 }
 
