@@ -5,6 +5,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -144,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
         Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
         takeVideoIntent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 45);
-        takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0.5);
+        takeVideoIntent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
         takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriForFile);
         takeVideoIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         if (takeVideoIntent.resolveActivity(getPackageManager()) != null) {
@@ -177,45 +178,60 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private class HeartRateTask extends AsyncTask<Uri, Integer, Float> {
+    private class HeartRateTask extends AsyncTask<Uri, Float, Float> {
 
         protected Float doInBackground(Uri... url) {
-
+            float totalred = 0;
             try {
 
                 File videoPath = getExternalFilesDir(Environment.getStorageDirectory().getAbsolutePath());
                 File videoFile = new File(videoPath, FILE_NAME);
-
                 Uri videoFileUri = Uri.parse(videoFile.toString());
-
-                ArrayList<Bitmap> rev = new ArrayList<Bitmap>();
-
                 MediaPlayer mp = MediaPlayer.create(getBaseContext(), videoFileUri);
-
                 MediaMetadataRetriever retriever = new MediaMetadataRetriever();
                 retriever.setDataSource(videoFile.getAbsolutePath());
 
-                int millis = mp.getDuration(); //milli seconds
-                for (int i = 1000000; i < millis * 1000; i += 1000000) {
+                int totalTimeMilli = mp.getDuration(); //milli seconds
+                int second = 1000000; //
+                int imgSize = 20; // Size of the box
+                int rate = 5; //number of samples per sec
+                int recordingDuration = (int) Math.floor(totalTimeMilli / 1000) * second; //rounding to the nearest second
+
+                ArrayList<Bitmap> rev = new ArrayList<>();
+                ArrayList<Float> values = new ArrayList<>();
+
+
+                int w = 0;
+                int h = 0;
+                int j = 0;
+                for (int i = rate; i <= recordingDuration; i += second / rate) {
                     Bitmap bitmap = retriever.getFrameAtTime(i, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
-                    rev.add(bitmap);
+                    //  rev.add(bitmap);
+                    if (w == 0 || h == 0) {
+                        w = bitmap.getWidth();
+                        h = bitmap.getHeight();
+                    }
+                    totalred = 0;
+                    // Center box of the image
+                    for (int x = (w - imgSize) / 2; x <= (w + imgSize) / 2; x++)
+                        for (int y = (h - imgSize) / 2; y <= (h + imgSize) / 2; y++) {
+                            totalred += Color.red(bitmap.getPixel(x, y));
+                        }
+                    values.add((totalred / (imgSize * imgSize)));
+                    j += 1;
+                    onProgressUpdate(j);
                 }
 
 
-                for (int i = 0; i < 20; i++) {
-                    onProgressUpdate(i * 5);
-                    Thread.sleep(500);
-                }
-
-            } catch (InterruptedException e) {
-                return Float.valueOf(0);
+            } catch (Exception e) {
+                return totalred;
             }
-            return Float.valueOf(100);
+            return totalred;
 
         }
 
-        protected void onProgressUpdate(Integer progress) {
-            setParametersForHR("Calculating " + String.valueOf(progress) + "% done", false);
+        protected void onProgressUpdate(float progress) {
+            setParametersForHR("Calculating frame at " + progress + "%", false);
         }
 
         protected void onPostExecute(Float result) {
