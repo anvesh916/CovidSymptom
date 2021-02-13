@@ -17,7 +17,6 @@ import android.os.ResultReceiver;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.MediaController;
 import android.widget.TextView;
@@ -45,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private Uri uriForFile;
     private Intent symptomActivity;
     private Intent respirationService;
-    boolean hasCameraFlash = false;
+
     HeartRateTask hrt;
 
 
@@ -68,16 +67,12 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_main);
         symptomActivity = new Intent(this, SymptomActivity.class);
         // Respiratory rate service
-        respirationService = new Intent(getApplicationContext(), RespiratoryRateService.class);
+        respirationService = new Intent(getApplicationContext(), RespiratoryRateSrv.class);
         ResultReceiver resultReceiver = new RespirationResultReceiver(null);
         respirationService.putExtra(Intent.EXTRA_RESULT_RECEIVER, resultReceiver);
-
-        hasCameraFlash = getPackageManager().
-                hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
     }
 
 
@@ -100,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
     public void measureHeartRate(View view) {
         this.setParametersForHR("Measurement Started", false);
         this.preInvokeCamera();
-//        this.startCalculation();
     }
 
     private void preInvokeCamera() {
@@ -289,6 +283,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public class RespirationResultReceiver extends ResultReceiver {
+        public String rate = "";
 
         public RespirationResultReceiver(Handler handler) {
             super(handler);
@@ -297,13 +292,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             super.onReceiveResult(resultCode, resultData);
-            TextView respirationData = findViewById(R.id.respiratoryText);
             if (resultCode == RESULT_OK && resultData != null) {
-                String dataZ = resultData.getString("Z");
-                String respiration = resultData.getString("R");
-                respirationData.setText("Z-Axis: " + dataZ + " Respiration Count " + respiration);
+                rate = resultData.getString("Result");
+                setParametersForRR("Recorded respiration " + rate, false);
             } else if (resultCode == RESULT_CANCELED) {
-                respirationData.setText("Reading Done");
+                stopService(respirationService);
+                setParametersForRR("Respiration Rate is " + rate, true);
             }
         }
     }
