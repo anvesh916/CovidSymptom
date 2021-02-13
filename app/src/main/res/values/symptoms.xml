@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="symptoms_array">
-        <item>Nausea</item>
-        <item>Headache</item>
-        <item>Diarrhea</item>
-        <item>Soar Throat</item>
-        <item>Fever</item>
-        <item>Muscle Ache</item>
-        <item>Loss of Smell or Taste</item>
-        <item>Cough</item>
-        <item>Shortness of Breath</item>
-        <item>Feeling tired</item>
+        <item id="NAUSEA">Nausea</item>
+        <item id="HEAD_ACHE">Headache</item>
+        <item id="DIARRHEA">Diarrhea</item>
+        <item id="SOAR_THROAT">Soar Throat</item>
+        <item id="FEVER">Fever</item>
+        <item id="MUSCLE_ACHE">Muscle Ache</item>
+        <item id="NO_SMELL_TASTE">Loss of Smell or Taste</item>
+        <item id="COUGH">Cough</item>
+        <item id="SHORT_BREATH">Shortness of Breath</item>
+        <item id="FEEL_TIRED">Feeling tired</item>
     </string-array>
 </resources>

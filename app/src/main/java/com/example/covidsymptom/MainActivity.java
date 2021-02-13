@@ -136,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     public void startRecording() {
         File videoPath = getExternalFilesDir(Environment.getStorageDirectory().getAbsolutePath());
         File mediaFile = new File(videoPath, FILE_NAME);

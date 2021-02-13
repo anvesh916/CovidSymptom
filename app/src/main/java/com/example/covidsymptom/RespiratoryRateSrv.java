@@ -18,7 +18,7 @@ public class RespiratoryRateSrv extends Service implements SensorEventListener {
 
     private SensorManager accelManage;
     private ResultReceiver mResultReceiver;
-    public static final int DURATION = 10; //seconds
+    public static final int DURATION = 60; //seconds
     public static final int FREQUENCY = 10; // 10 samples per seconds
     public static final int READING_RATE = 1000 * 1000 / FREQUENCY;
     public static final int NO_OF_SAMPLES = DURATION * (FREQUENCY + 2); // Receiving two samples extra
@@ -61,21 +61,10 @@ public class RespiratoryRateSrv extends Service implements SensorEventListener {
             index = 0;
             printData((peak * DURATION) / 60);
             accelManage.unregisterListener(this);
-            // this.calculateRespiratoryRate();
             mResultReceiver.send(MainActivity.RESULT_CANCELED, null);
         }
     }
 
-    public void calculateRespiratoryRate() {
-        diff[0] = z[0];
-        for (int i = 1; i < NO_OF_SAMPLES; i++) {
-            diff[i] = z[i] - z[i - 1];
-            if ((i > 1) && (diff[i - 1] < epsilon) && (diff[i] > epsilon)) {
-                peak = peak + 1;
-            }
-        }
-        printData((peak * DURATION) / 60);
-    }
 
     void printData(int data) {
         Bundle bundle = new Bundle();
