@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private Uri uriForFile;
     private Intent symptomActivity;
     private Intent respirationService;
+    private DataBaseHelper dataBaseHelper;
 
     HeartRateTask hrt;
 
@@ -67,12 +68,16 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main);
         symptomActivity = new Intent(this, SymptomActivity.class);
+
         // Respiratory rate service
         respirationService = new Intent(getApplicationContext(), RespiratoryRateSrv.class);
         ResultReceiver resultReceiver = new RespirationResultReceiver(null);
         respirationService.putExtra(Intent.EXTRA_RESULT_RECEIVER, resultReceiver);
+
+        dataBaseHelper = new DataBaseHelper(MainActivity.this);
     }
 
 

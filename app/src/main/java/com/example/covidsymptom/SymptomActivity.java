@@ -15,12 +15,12 @@ import java.util.HashMap;
 import java.util.List;
 
 public class SymptomActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, RatingBar.OnRatingBarChangeListener {
-    private HashMap<String, Float> symptoms;
+    private HashMap<String, Integer> symptoms;
     private RatingBar simpleRatingBar;
     private Spinner spinner;
     private int spinnerPosition;
     private ImageButton deleteButton;
-    private PatientDataModel symptom;
+    private SymptomModel symptom;
     private DataBaseHelper dataBaseHelper;
     private ListView signList;
 
@@ -36,7 +36,9 @@ public class SymptomActivity extends AppCompatActivity implements AdapterView.On
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
 
-        symptoms = new HashMap<String, Float>();
+        symptoms = new HashMap<String, Integer>();
+
+        symptoms.put("RESPIRATION_RATE", 0);
         simpleRatingBar = findViewById(R.id.simpleRatingBar);
         simpleRatingBar.setOnRatingBarChangeListener(this);
 
@@ -67,12 +69,12 @@ public class SymptomActivity extends AppCompatActivity implements AdapterView.On
     public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
         String item = (String) spinner.getItemAtPosition(spinnerPosition);
         if (rating > 0) {
-            symptoms.put(item, rating);
-            symptom = new PatientDataModel(item, rating);
+           // symptoms.put(item, rating);
+         //   symptom = new SymptomModel(item, rating);
             dataBaseHelper.addOne(symptom);
         } else if (symptoms.get(item) != null) {
             symptoms.remove(item);
-            dataBaseHelper.deleteOne(new PatientDataModel(item, 0));
+         //   dataBaseHelper.deleteOne(new SymptomModel(item, 0));
         }
         deleteButton.setVisibility(rating > 0 ? View.VISIBLE : View.INVISIBLE);
         this.updateList();
@@ -90,12 +92,12 @@ public class SymptomActivity extends AppCompatActivity implements AdapterView.On
     }
 
     private void updateList() {
-        // Show the list
-        List<PatientDataModel> allSymptoms = dataBaseHelper.getAll();
-        for (int i = 0; i < allSymptoms.size(); i++) {
-            symptoms.put(allSymptoms.get(i).getSign(), allSymptoms.get(i).getValue());
-        }
-        ArrayAdapter symptoms = new ArrayAdapter<PatientDataModel>(SymptomActivity.this, android.R.layout.simple_list_item_1, allSymptoms);
-        signList.setAdapter(symptoms);
+//        // Show the list
+//        List<SymptomModel> allSymptoms = dataBaseHelper.getAll();
+//        for (int i = 0; i < allSymptoms.size(); i++) {
+//            symptoms.put(allSymptoms.get(i).getSign(), allSymptoms.get(i).getValue());
+//        }
+//        ArrayAdapter symptoms = new ArrayAdapter<SymptomModel>(SymptomActivity.this, android.R.layout.simple_list_item_1, allSymptoms);
+//        signList.setAdapter(symptoms);
     }
 }
