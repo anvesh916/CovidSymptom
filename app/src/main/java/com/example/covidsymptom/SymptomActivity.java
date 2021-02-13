@@ -36,9 +36,19 @@ public class SymptomActivity extends AppCompatActivity implements AdapterView.On
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
 
+        // Initialise hashmap with default values
         symptoms = new HashMap<String, Integer>();
+        symptoms.put("Nausea", 0);
+        symptoms.put("Headache", 0);
+        symptoms.put("Diarrhea", 0);
+        symptoms.put("Soar Throat", 0);
+        symptoms.put("Fever", 0);
+        symptoms.put("Muscle Ache", 0);
+        symptoms.put("Loss of Smell or Taste", 0);
+        symptoms.put("Cough", 0);
+        symptoms.put("Shortness of Breath", 0);
+        symptoms.put("Feeling tired", 0);
 
-        symptoms.put("RESPIRATION_RATE", 0);
         simpleRatingBar = findViewById(R.id.simpleRatingBar);
         simpleRatingBar.setOnRatingBarChangeListener(this);
 
@@ -52,7 +62,7 @@ public class SymptomActivity extends AppCompatActivity implements AdapterView.On
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         spinnerPosition = position;
-        String item = (String) spinner.getItemAtPosition(spinnerPosition);
+        String item = (String) parent.getSelectedItem();
         if (symptoms.get(item) != null) {
             simpleRatingBar.setRating(symptoms.get(item));
         } else {
@@ -69,12 +79,12 @@ public class SymptomActivity extends AppCompatActivity implements AdapterView.On
     public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
         String item = (String) spinner.getItemAtPosition(spinnerPosition);
         if (rating > 0) {
-           // symptoms.put(item, rating);
-         //   symptom = new SymptomModel(item, rating);
-            dataBaseHelper.addOne(symptom);
+            symptoms.put(item, (int) rating);
+            //   symptom = new SymptomModel(item, rating);
+//            dataBaseHelper.addOne(symptom);
         } else if (symptoms.get(item) != null) {
-            symptoms.remove(item);
-         //   dataBaseHelper.deleteOne(new SymptomModel(item, 0));
+            symptoms.put(item, 0);
+            //   dataBaseHelper.deleteOne(new SymptomModel(item, 0));
         }
         deleteButton.setVisibility(rating > 0 ? View.VISIBLE : View.INVISIBLE);
         this.updateList();
