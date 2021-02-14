@@ -102,8 +102,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void measureHeartRate(View view) {
         this.setParametersForHR("Measurement Started", false);
-//        this.preInvokeCamera();
-        this.startCalculation();
+        this.preInvokeCamera();
+      //  this.startCalculation();
     }
 
     private void preInvokeCamera() {
