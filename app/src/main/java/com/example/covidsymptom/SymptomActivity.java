@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SymptomActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, RatingBar.OnRatingBarChangeListener {
     public static final String NAUSEA = "Nausea";
@@ -85,7 +86,6 @@ public class SymptomActivity extends AppCompatActivity implements AdapterView.On
             symptoms.put(item, 0);
         }
         deleteButton.setVisibility(rating > 0 ? View.VISIBLE : View.INVISIBLE);
-        this.updateList();
     }
 
     public void removeRating(View view) {
@@ -93,7 +93,7 @@ public class SymptomActivity extends AppCompatActivity implements AdapterView.On
     }
 
     public void uploadSymptoms(View view) {
-        SymptomModel symptomModel = new SymptomModel();
+        SymptomModel symptomModel = dataBaseHelper.getByID(1);
         symptomModel.setNAUSEA(symptoms.get(NAUSEA));
         symptomModel.setHEAD_ACHE(symptoms.get(HEADACHE));
         symptomModel.setDIARRHEA(symptoms.get(DIARRHEA));
@@ -104,28 +104,15 @@ public class SymptomActivity extends AppCompatActivity implements AdapterView.On
         symptomModel.setCOUGH(symptoms.get(COUGH));
         symptomModel.setSHORT_BREATH(symptoms.get(SHORTNESS_OF_BREATH));
         symptomModel.setFEEL_TIRED(symptoms.get(FEELING_TIRED));
-        dataBaseHelper.addOne(symptomModel);
+        dataBaseHelper.addOne(symptomModel, 1);
 
         this.updateList();
     }
 
     private void updateList() {
-        // Show the list
-        List<String> items = new ArrayList<String>();
-        SymptomModel allSymptoms = dataBaseHelper.getByID(1);
-        items.add("Heart Rate " + allSymptoms.getHEART_RATE());
-        items.add("Respiratory Rate " + allSymptoms.getRESP_RATE());
-        items.add("Nausea " + allSymptoms.getNAUSEA());
-        items.add("Headache " + allSymptoms.getHEAD_ACHE());
-        items.add("Diarrhea " + allSymptoms.getDIARRHEA());
-        items.add("Soar Throat " + allSymptoms.getSOAR_THROAT());
-        items.add("Fever " + allSymptoms.getFEVER());
-        items.add("Muscle Ache " + allSymptoms.getMUSCLE_ACHE());
-        items.add("Loss of Smell or Taste " + allSymptoms.getNO_SMELL_TASTE());
-        items.add("Cough " + allSymptoms.getCOUGH());
-        items.add("Shortness of Breath " + allSymptoms.getSHORT_BREATH());
-        items.add("Feeling tired " + allSymptoms.getFEEL_TIRED());
 
+        SymptomModel allSymptoms = dataBaseHelper.getByID(1);
+        // Add in the spinner list
         symptoms.put(NAUSEA, allSymptoms.getNAUSEA());
         symptoms.put(HEADACHE, allSymptoms.getHEAD_ACHE());
         symptoms.put(DIARRHEA, allSymptoms.getDIARRHEA());
@@ -137,6 +124,13 @@ public class SymptomActivity extends AppCompatActivity implements AdapterView.On
         symptoms.put(SHORTNESS_OF_BREATH, allSymptoms.getSHORT_BREATH());
         symptoms.put(FEELING_TIRED, allSymptoms.getFEEL_TIRED());
 
+        // Show the list
+        List<String> items = new ArrayList<String>();
+        for (Map.Entry<String, Integer> entry : symptoms.entrySet()) {
+            String key = entry.getKey();
+            Integer value = entry.getValue();
+            items.add(key + " " + value);
+        }
         ArrayAdapter symptomsList = new ArrayAdapter<String>(SymptomActivity.this, android.R.layout.simple_list_item_1, items);
         signList.setAdapter(symptomsList);
     }

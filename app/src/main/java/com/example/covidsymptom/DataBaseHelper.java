@@ -56,10 +56,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     }
 
-    public boolean addOne(SymptomModel model) {
+    public boolean addOne(SymptomModel model, int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(ID, 1);
+        cv.put(ID, id);
         cv.put(HEART_RATE, model.getHEART_RATE());
         cv.put(RESP_RATE, model.getRESP_RATE());
         cv.put(NAUSEA, model.getNAUSEA());
@@ -76,8 +76,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         //Insert
         long insert = db.insertWithOnConflict(COVID_TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_IGNORE);
         if (insert == -1) {
-            insert = db.update(COVID_TABLE_NAME, cv, ID + "=?", new String[]{"1"});
+            insert = db.update(COVID_TABLE_NAME, cv, ID + "=?", new String[]{String.valueOf(id)});
         }
+        db.close();
         return insert != -1;
     }
 

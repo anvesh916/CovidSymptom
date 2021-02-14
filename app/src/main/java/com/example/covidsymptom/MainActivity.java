@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void measureHeartRate(View view) {
         this.setParametersForHR("Measurement Started", false);
-        //   this.preInvokeCamera();
+//        this.preInvokeCamera();
         this.startCalculation();
     }
 
@@ -185,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
         protected Integer doInBackground(Uri... url) {
             float totalred = 0;
             int peak = 0;
+            int totalTimeMilli = 0;
             try {
 
                 File videoPath = getExternalFilesDir(Environment.getStorageDirectory().getAbsolutePath());
@@ -194,9 +195,9 @@ public class MainActivity extends AppCompatActivity {
                 MediaMetadataRetriever retriever = new MediaMetadataRetriever();
                 retriever.setDataSource(videoFile.getAbsolutePath());
 
-                int totalTimeMilli = mp.getDuration(); //milli seconds
+                totalTimeMilli = mp.getDuration(); //milli seconds
                 int second = 1000000; //
-                int imgSize = 200; // Size of the box
+                int imgSize = 100; // Size of the box
                 int rate = 4; //number of samples per sec
                 int recordingDuration = (int) Math.floor(totalTimeMilli / 1000) * second; //rounding to the nearest second
 
@@ -204,10 +205,13 @@ public class MainActivity extends AppCompatActivity {
                 int h = 0;
                 int j = 0;
                 float[] diff = new float[imgSize * imgSize];
-                float epsilon = 500;
+                float epsilon = 100;
                 float prev = 0;
+                int no_of_frames = (totalTimeMilli * rate) / 1000;
                 for (int i = rate; i <= recordingDuration; i += second / rate) {
                     Bitmap bitmap = retriever.getFrameAtTime(i, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+
+                    //get image size only once
                     if (w == 0 || h == 0) {
                         w = bitmap.getWidth();
                         h = bitmap.getHeight();
@@ -231,19 +235,17 @@ public class MainActivity extends AppCompatActivity {
                     prev = totalred;
                     Log.d("ASYNC", "" + diff[j]);
                     j += 1;
-                    onProgressUpdate(j, (peak * 45) / 60);
+                    onProgressUpdate(j, no_of_frames);
                 }
-                peak = peak * 2;
                 retriever.release();
             } catch (Exception e) {
                 return 0;
             }
-            return (peak * 45) / 60;
-
+            return (peak * 60 * 1000) / totalTimeMilli;
         }
 
-        protected void onProgressUpdate(Integer progress, float peak) {
-            setParametersForHR("Processing " + Float.toString(progress) + "% \nBPM: " + peak, false);
+        protected void onProgressUpdate(Integer progress, int frames) {
+            setParametersForHR("Processing frames " + Integer.toString(progress) + "/" + frames , false);
         }
 
         protected void onPostExecute(Integer result) {
@@ -291,12 +293,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void uploadSigns(View view) {
-        SymptomModel symptomModel = new SymptomModel();
-        symptomModel.setRESP_RATE(respirationRate);
-        symptomModel.setHEART_RATE(heartRate);
-        if (dataBaseHelper.addOne(symptomModel)) {
+        SymptomModel allSymptoms = dataBaseHelper.getByID(1);
+        allSymptoms.setRESP_RATE(respirationRate);
+        allSymptoms.setHEART_RATE(heartRate);
+        if (dataBaseHelper.addOne(allSymptoms, 1)) {
             Toast.makeText(this, "Saved to DB",
-                    Toast.LENGTH_LONG).show();
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
