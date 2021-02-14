@@ -59,7 +59,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public boolean addOne(SymptomModel model) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-        cv.put(ID, "1");
+        cv.put(ID, 1);
         cv.put(HEART_RATE, model.getHEART_RATE());
         cv.put(RESP_RATE, model.getRESP_RATE());
         cv.put(NAUSEA, model.getNAUSEA());

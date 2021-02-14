@@ -23,14 +23,14 @@
 
     <VideoView
         android:id="@+id/video_preview"
-        android:layout_width="315dp"
-        android:layout_height="324dp"
+        android:layout_width="322dp"
+        android:layout_height="305dp"
         app:layout_constraintBottom_toTopOf="@+id/heartRateText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintHorizontal_bias="0.478"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.8" />
+        app:layout_constraintVertical_bias="0.838" />
 
     <TextView
         android:id="@+id/respiratoryText"
@@ -82,13 +82,13 @@
 
     <TextView
         android:id="@+id/heartRateText"
-        android:layout_width="320dp"
-        android:layout_height="26dp"
-        android:layout_marginBottom="12dp"
+        android:layout_width="315dp"
+        android:layout_height="43dp"
+        android:layout_marginBottom="16dp"
         android:text="Measure not taken"
         app:layout_constraintBottom_toTopOf="@+id/heartRateButton"
         app:layout_constraintEnd_toEndOf="@+id/video_preview"
-        app:layout_constraintHorizontal_bias="0.527"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/video_preview" />
 
     <Button

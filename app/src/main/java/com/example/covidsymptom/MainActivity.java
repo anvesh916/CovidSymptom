@@ -102,7 +102,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void measureHeartRate(View view) {
         this.setParametersForHR("Measurement Started", false);
-        this.preInvokeCamera();
+        //   this.preInvokeCamera();
+        this.startCalculation();
     }
 
     private void preInvokeCamera() {
@@ -179,10 +180,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private class HeartRateTask extends AsyncTask<Uri, Float, Float> {
+    private class HeartRateTask extends AsyncTask<Uri, Integer, Integer> {
 
-        protected Float doInBackground(Uri... url) {
+        protected Integer doInBackground(Uri... url) {
             float totalred = 0;
+            int peak = 0;
             try {
 
                 File videoPath = getExternalFilesDir(Environment.getStorageDirectory().getAbsolutePath());
@@ -194,48 +196,57 @@ public class MainActivity extends AppCompatActivity {
 
                 int totalTimeMilli = mp.getDuration(); //milli seconds
                 int second = 1000000; //
-                int imgSize = 20; // Size of the box
-                int rate = 5; //number of samples per sec
+                int imgSize = 200; // Size of the box
+                int rate = 4; //number of samples per sec
                 int recordingDuration = (int) Math.floor(totalTimeMilli / 1000) * second; //rounding to the nearest second
-
-                ArrayList<Bitmap> rev = new ArrayList<>();
-                ArrayList<Float> values = new ArrayList<>();
-
 
                 int w = 0;
                 int h = 0;
                 int j = 0;
+                float[] diff = new float[imgSize * imgSize];
+                float epsilon = 500;
+                float prev = 0;
                 for (int i = rate; i <= recordingDuration; i += second / rate) {
                     Bitmap bitmap = retriever.getFrameAtTime(i, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
-                    //  rev.add(bitmap);
                     if (w == 0 || h == 0) {
                         w = bitmap.getWidth();
                         h = bitmap.getHeight();
                     }
                     totalred = 0;
                     // Center box of the image
-                    for (int x = (w - imgSize) / 2; x <= (w + imgSize) / 2; x++)
-                        for (int y = (h - imgSize) / 2; y <= (h + imgSize) / 2; y++) {
+                    for (int x = (w - imgSize); x < w; x++)
+                        for (int y = (h - imgSize); y < h; y++) {
                             totalred += Color.red(bitmap.getPixel(x, y));
                         }
-                    values.add((totalred / (imgSize * imgSize)));
+
+                    if (j > 0) {
+                        diff[j] = Math.abs(totalred - prev);
+                        if ((diff[j - 1] < epsilon) && (diff[j] > epsilon)) {
+                            peak = peak + 1;
+                        }
+                    } else {
+                        // When index is 0
+                        diff[j] = 0;
+                    }
+                    prev = totalred;
+                    Log.d("ASYNC", "" + diff[j]);
                     j += 1;
-                    onProgressUpdate(j);
+                    onProgressUpdate(j, (peak * 45) / 60);
                 }
-
-
+                peak = peak * 2;
+                retriever.release();
             } catch (Exception e) {
-                return totalred;
+                return 0;
             }
-            return totalred;
+            return (peak * 45) / 60;
 
         }
 
-        protected void onProgressUpdate(float progress) {
-            setParametersForHR("Calculating frame at " + progress + "%", false);
+        protected void onProgressUpdate(Integer progress, float peak) {
+            setParametersForHR("Processing " + Float.toString(progress) + "% \nBPM: " + peak, false);
         }
 
-        protected void onPostExecute(Float result) {
+        protected void onPostExecute(Integer result) {
             heartRate = Math.round(result);
             setParametersForHR("Heart Rate is " + heartRate, true);
         }
@@ -243,8 +254,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void stopHRMeasurement(View view) {
-        this.setParametersForHR("Measurement Cancelled", true);
         hrt.cancel(true);
+        this.setParametersForHR("Measurement cancelled by user", true);
     }
 
     void setParametersForHR(String displayText, boolean isDone) {
@@ -283,7 +294,10 @@ public class MainActivity extends AppCompatActivity {
         SymptomModel symptomModel = new SymptomModel();
         symptomModel.setRESP_RATE(respirationRate);
         symptomModel.setHEART_RATE(heartRate);
-        dataBaseHelper.addOne(symptomModel);
+        if (dataBaseHelper.addOne(symptomModel)) {
+            Toast.makeText(this, "Saved to DB",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
 
