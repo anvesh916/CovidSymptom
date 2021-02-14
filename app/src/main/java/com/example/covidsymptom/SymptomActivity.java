@@ -11,10 +11,21 @@ import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class SymptomActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener, RatingBar.OnRatingBarChangeListener {
+    public static final String NAUSEA = "Nausea";
+    public static final String HEADACHE = "Headache";
+    public static final String DIARRHEA = "Diarrhea";
+    public static final String SOAR_THROAT = "Soar Throat";
+    public static final String FEVER = "Fever";
+    public static final String MUSCLE_ACHE = "Muscle Ache";
+    public static final String LOSS_OF_SMELL_OR_TASTE = "Loss of Smell or Taste";
+    public static final String COUGH = "Cough";
+    public static final String SHORTNESS_OF_BREATH = "Shortness of Breath";
+    public static final String FEELING_TIRED = "Feeling tired";
     private HashMap<String, Integer> symptoms;
     private RatingBar simpleRatingBar;
     private Spinner spinner;
@@ -38,16 +49,6 @@ public class SymptomActivity extends AppCompatActivity implements AdapterView.On
 
         // Initialise hashmap with default values
         symptoms = new HashMap<String, Integer>();
-        symptoms.put("Nausea", 0);
-        symptoms.put("Headache", 0);
-        symptoms.put("Diarrhea", 0);
-        symptoms.put("Soar Throat", 0);
-        symptoms.put("Fever", 0);
-        symptoms.put("Muscle Ache", 0);
-        symptoms.put("Loss of Smell or Taste", 0);
-        symptoms.put("Cough", 0);
-        symptoms.put("Shortness of Breath", 0);
-        symptoms.put("Feeling tired", 0);
 
         simpleRatingBar = findViewById(R.id.simpleRatingBar);
         simpleRatingBar.setOnRatingBarChangeListener(this);
@@ -80,11 +81,8 @@ public class SymptomActivity extends AppCompatActivity implements AdapterView.On
         String item = (String) spinner.getItemAtPosition(spinnerPosition);
         if (rating > 0) {
             symptoms.put(item, (int) rating);
-            //   symptom = new SymptomModel(item, rating);
-//            dataBaseHelper.addOne(symptom);
         } else if (symptoms.get(item) != null) {
             symptoms.put(item, 0);
-            //   dataBaseHelper.deleteOne(new SymptomModel(item, 0));
         }
         deleteButton.setVisibility(rating > 0 ? View.VISIBLE : View.INVISIBLE);
         this.updateList();
@@ -95,19 +93,51 @@ public class SymptomActivity extends AppCompatActivity implements AdapterView.On
     }
 
     public void uploadSymptoms(View view) {
-        for (String i : symptoms.keySet()) {
-            dataBaseHelper.addOne(symptom);
-        }
+        SymptomModel symptomModel = new SymptomModel();
+        symptomModel.setNAUSEA(symptoms.get(NAUSEA));
+        symptomModel.setHEAD_ACHE(symptoms.get(HEADACHE));
+        symptomModel.setDIARRHEA(symptoms.get(DIARRHEA));
+        symptomModel.setSOAR_THROAT(symptoms.get(SOAR_THROAT));
+        symptomModel.setFEVER(symptoms.get(FEVER));
+        symptomModel.setMUSCLE_ACHE(symptoms.get(MUSCLE_ACHE));
+        symptomModel.setNO_SMELL_TASTE(symptoms.get(LOSS_OF_SMELL_OR_TASTE));
+        symptomModel.setCOUGH(symptoms.get(COUGH));
+        symptomModel.setSHORT_BREATH(symptoms.get(SHORTNESS_OF_BREATH));
+        symptomModel.setFEEL_TIRED(symptoms.get(FEELING_TIRED));
+        dataBaseHelper.addOne(symptomModel);
+
         this.updateList();
     }
 
     private void updateList() {
-//        // Show the list
-//        List<SymptomModel> allSymptoms = dataBaseHelper.getAll();
-//        for (int i = 0; i < allSymptoms.size(); i++) {
-//            symptoms.put(allSymptoms.get(i).getSign(), allSymptoms.get(i).getValue());
-//        }
-//        ArrayAdapter symptoms = new ArrayAdapter<SymptomModel>(SymptomActivity.this, android.R.layout.simple_list_item_1, allSymptoms);
-//        signList.setAdapter(symptoms);
+        // Show the list
+        List<String> items = new ArrayList<String>();
+        SymptomModel allSymptoms = dataBaseHelper.getByID(1);
+        items.add("Heart Rate " + allSymptoms.getHEART_RATE());
+        items.add("Respiratory Rate " + allSymptoms.getRESP_RATE());
+        items.add("Nausea " + allSymptoms.getNAUSEA());
+        items.add("Headache " + allSymptoms.getHEAD_ACHE());
+        items.add("Diarrhea " + allSymptoms.getDIARRHEA());
+        items.add("Soar Throat " + allSymptoms.getSOAR_THROAT());
+        items.add("Fever " + allSymptoms.getFEVER());
+        items.add("Muscle Ache " + allSymptoms.getMUSCLE_ACHE());
+        items.add("Loss of Smell or Taste " + allSymptoms.getNO_SMELL_TASTE());
+        items.add("Cough " + allSymptoms.getCOUGH());
+        items.add("Shortness of Breath " + allSymptoms.getSHORT_BREATH());
+        items.add("Feeling tired " + allSymptoms.getFEEL_TIRED());
+
+        symptoms.put(NAUSEA, allSymptoms.getNAUSEA());
+        symptoms.put(HEADACHE, allSymptoms.getHEAD_ACHE());
+        symptoms.put(DIARRHEA, allSymptoms.getDIARRHEA());
+        symptoms.put(SOAR_THROAT, allSymptoms.getSOAR_THROAT());
+        symptoms.put(FEVER, allSymptoms.getFEVER());
+        symptoms.put(MUSCLE_ACHE, allSymptoms.getMUSCLE_ACHE());
+        symptoms.put(LOSS_OF_SMELL_OR_TASTE, allSymptoms.getNO_SMELL_TASTE());
+        symptoms.put(COUGH, allSymptoms.getCOUGH());
+        symptoms.put(SHORTNESS_OF_BREATH, allSymptoms.getSHORT_BREATH());
+        symptoms.put(FEELING_TIRED, allSymptoms.getFEEL_TIRED());
+
+        ArrayAdapter symptomsList = new ArrayAdapter<String>(SymptomActivity.this, android.R.layout.simple_list_item_1, items);
+        signList.setAdapter(symptomsList);
     }
 }

@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     private Intent symptomActivity;
     private Intent respirationService;
     private DataBaseHelper dataBaseHelper;
+    public int respirationRate;
+    public int heartRate;
 
     HeartRateTask hrt;
 
@@ -78,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         respirationService.putExtra(Intent.EXTRA_RESULT_RECEIVER, resultReceiver);
 
         dataBaseHelper = new DataBaseHelper(MainActivity.this);
+
     }
 
 
@@ -233,7 +236,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         protected void onPostExecute(Float result) {
-            setParametersForHR("Heart Rate is " + result.toString(), true);
+            heartRate = Math.round(result);
+            setParametersForHR("Heart Rate is " + heartRate, true);
         }
     }
 
@@ -276,6 +280,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void uploadSigns(View view) {
+        SymptomModel symptomModel = new SymptomModel();
+        symptomModel.setRESP_RATE(respirationRate);
+        symptomModel.setHEART_RATE(heartRate);
+        dataBaseHelper.addOne(symptomModel);
     }
 
 
@@ -287,7 +295,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     public class RespirationResultReceiver extends ResultReceiver {
-        public String rate = "";
 
         public RespirationResultReceiver(Handler handler) {
             super(handler);
@@ -297,11 +304,11 @@ public class MainActivity extends AppCompatActivity {
         protected void onReceiveResult(int resultCode, Bundle resultData) {
             super.onReceiveResult(resultCode, resultData);
             if (resultCode == RESULT_OK && resultData != null) {
-                rate = resultData.getString("Result");
-                setParametersForRR("Recorded respiration " + rate, false);
+                respirationRate = Integer.parseInt(resultData.getString("Result"));
+                setParametersForRR("Recorded respiration " + respirationRate, false);
             } else if (resultCode == RESULT_CANCELED) {
                 stopService(respirationService);
-                setParametersForRR("Respiration Rate is " + rate, true);
+                setParametersForRR("Respiration Rate is " + respirationRate, true);
             }
         }
     }

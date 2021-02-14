@@ -29,6 +29,21 @@ public class SymptomModel {
         this.FEEL_TIRED = FEEL_TIRED;
     }
 
+    public SymptomModel() {
+        this.RESP_RATE = 0;
+        this.HEART_RATE = 0;
+        this.NAUSEA = 0;
+        this.HEAD_ACHE = 0;
+        this.DIARRHEA = 0;
+        this.SOAR_THROAT = 0;
+        this.FEVER = 0;
+        this.MUSCLE_ACHE = 0;
+        this.NO_SMELL_TASTE = 0;
+        this.COUGH = 0;
+        this.SHORT_BREATH = 0;
+        this.FEEL_TIRED = 0;
+    }
+
 
     @Override
     public String toString() {

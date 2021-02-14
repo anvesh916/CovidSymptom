@@ -59,13 +59,24 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public boolean addOne(SymptomModel model) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
-      //  cv.put("COLUMN_SIGN", model.getSign());
-       // cv.put("COLUMN_VALUE", model.getValue());
+        cv.put(ID, "1");
+        cv.put(HEART_RATE, model.getHEART_RATE());
+        cv.put(RESP_RATE, model.getRESP_RATE());
+        cv.put(NAUSEA, model.getNAUSEA());
+        cv.put(HEAD_ACHE, model.getHEAD_ACHE());
+        cv.put(DIARRHEA, model.getDIARRHEA());
+        cv.put(SOAR_THROAT, model.getSOAR_THROAT());
+        cv.put(FEVER, model.getFEVER());
+        cv.put(MUSCLE_ACHE, model.getMUSCLE_ACHE());
+        cv.put(NO_SMELL_TASTE, model.getNO_SMELL_TASTE());
+        cv.put(COUGH, model.getCOUGH());
+        cv.put(SHORT_BREATH, model.getSHORT_BREATH());
+        cv.put(FEEL_TIRED, model.getFEEL_TIRED());
 
         //Insert
         long insert = db.insertWithOnConflict(COVID_TABLE_NAME, null, cv, SQLiteDatabase.CONFLICT_IGNORE);
         if (insert == -1) {
-       //     insert = db.update(COVID_TABLE_NAME, cv, "COLUMN_SIGN" + "=?", new String[]{model.getSign()});
+            insert = db.update(COVID_TABLE_NAME, cv, ID + "=?", new String[]{"1"});
         }
         return insert != -1;
     }
@@ -77,9 +88,9 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(query, null);
         if (cursor.moveToFirst()) {
             do {
-                String sign = cursor.getString(0);
-                float value = cursor.getFloat(1);
-             //   returnList.add(new SymptomModel(sign, value));
+//                int sign = cursor.getInt(1);
+//                float value = cursor.getFloat(1);
+                //   returnList.add(new SymptomModel(sign, value));
             } while (cursor.moveToNext());
         } else {
             //No data
@@ -89,11 +100,42 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         return returnList;
     }
 
+    public SymptomModel getByID(int id) {
+        SymptomModel symptom = new SymptomModel();
+        String query = "SELECT * FROM " + COVID_TABLE_NAME + " WHERE " + ID + " = " + id;
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+            symptom.setRESP_RATE(cursor.getInt(1));
+            symptom.setHEART_RATE(cursor.getInt(2));
+            symptom.setNAUSEA(cursor.getInt(3));
+            symptom.setHEAD_ACHE(cursor.getInt(4));
+            symptom.setDIARRHEA(cursor.getInt(5));
+            symptom.setSOAR_THROAT(cursor.getInt(6));
+            symptom.setFEVER(cursor.getInt(7));
+            symptom.setMUSCLE_ACHE(cursor.getInt(8));
+            symptom.setNO_SMELL_TASTE(cursor.getInt(9));
+            symptom.setCOUGH(cursor.getInt(10));
+            symptom.setSHORT_BREATH(cursor.getInt(11));
+            symptom.setFEEL_TIRED(cursor.getInt(12));
+        }
+        cursor.close();
+        db.close();
+        return symptom;
+    }
+
     public boolean deleteOne(SymptomModel model) {
         SQLiteDatabase db = this.getWritableDatabase();
-       // String query = "DELETE FROM " + COVID_TABLE_NAME + " WHERE " + "COLUMN_SIGN" + " = '" + model.getSign() + "'";
-       // Cursor cursor = db.rawQuery(query, null);
-       // return !!cursor.moveToFirst();
+        // String query = "DELETE FROM " + COVID_TABLE_NAME + " WHERE " + "COLUMN_SIGN" + " = '" + model.getSign() + "'";
+        // Cursor cursor = db.rawQuery(query, null);
+        // return !!cursor.moveToFirst();
         return true;
+    }
+
+    public boolean deleteById(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "DELETE FROM " + COVID_TABLE_NAME + " WHERE " + ID + " = " + id;
+        Cursor cursor = db.rawQuery(query, null);
+        return !!cursor.moveToFirst();
     }
 }
