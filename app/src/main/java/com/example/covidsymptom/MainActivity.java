@@ -100,11 +100,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(symptomActivity);
     }
 
-    public void measureHeartRate(View view) {
-        this.setParametersForHR("Measurement Started", false);
-        this.preInvokeCamera();
-      //  this.startCalculation();
-    }
+
 
     private void preInvokeCamera() {
         if (checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
@@ -166,6 +162,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void measureHeartRate(View view) {
+        this.setParametersForHR("Measurement Started", false);
+        this.preInvokeCamera();
+//        this.startCalculation();
+    }
+
     private void startCalculation() {
         this.setParametersForHR("Video Recorded", false);
 
@@ -205,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
                 int h = 0;
                 int j = 0;
                 float[] diff = new float[imgSize * imgSize];
-                float epsilon = 100;
+                float epsilon = 1500;
                 float prev = 0;
                 int no_of_frames = (totalTimeMilli * rate) / 1000;
                 for (int i = rate; i <= recordingDuration; i += second / rate) {
@@ -218,14 +220,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                     totalred = 0;
                     // Center box of the image
-                    for (int x = (w - imgSize); x < w; x++)
-                        for (int y = (h - imgSize); y < h; y++) {
+                    for (int x = (w - 2* imgSize); x < w - imgSize; x++)
+                        for (int y = (h - 2 *imgSize); y < h - imgSize; y++) {
                             totalred += Color.red(bitmap.getPixel(x, y));
                         }
 
                     if (j > 0) {
                         diff[j] = Math.abs(totalred - prev);
-                        if ((diff[j - 1] < epsilon) && (diff[j] > epsilon)) {
+                        if (diff[j] > epsilon) {
                             peak = peak + 1;
                         }
                     } else {

@@ -33,7 +33,7 @@ public class RespiratoryRateSrv extends Service implements SensorEventListener {
     }
 
     int index = 0;
-    public static final float epsilon = 16;
+    public static final float epsilon = 13;
     private float[] z = new float[NO_OF_SAMPLES];
     private final float[] diff = new float[NO_OF_SAMPLES];
     private int peak = 0;
