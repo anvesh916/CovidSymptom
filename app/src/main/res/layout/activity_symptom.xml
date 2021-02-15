@@ -22,7 +22,6 @@
         android:layout_width="196dp"
         android:layout_height="32dp"
         android:layout_marginTop="16dp"
-
         android:text="Symptom Logging"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/spinner"
@@ -36,17 +35,15 @@
         android:id="@+id/simpleRatingBar"
         android:layout_width="237dp"
         android:layout_height="51dp"
-        android:layout_marginBottom="544dp"
+        android:layout_marginBottom="540dp"
         android:numStars="5"
-
         android:stepSize="1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/spinner"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.188"
         app:layout_constraintStart_toStartOf="@+id/spinner" />
 
     <Button
-        android:id="@+id/button2"
         android:layout_width="123dp"
         android:layout_height="41dp"
         android:onClick="uploadSymptoms"
@@ -78,8 +75,8 @@
 
     <ListView
         android:id="@+id/sign_list"
-        android:layout_width="391dp"
-        android:layout_height="516dp"
+        android:layout_width="389dp"
+        android:layout_height="492dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.4"
