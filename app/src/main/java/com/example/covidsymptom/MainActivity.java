@@ -27,11 +27,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.OpenCVLoader;
 
 import java.io.File;
-import java.util.ArrayList;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -51,22 +49,6 @@ public class MainActivity extends AppCompatActivity {
     HeartRateTask hrt;
     int recordNumber;
 
-
-    BaseLoaderCallback baseLoaderCallback = new BaseLoaderCallback(this) {
-        @Override
-        public void onManagerConnected(int status) {
-            switch (status) {
-                case BaseLoaderCallback.SUCCESS:
-                    Log.i(TAG, "OpenCV loaded successfully");
-                    break;
-                default: {
-                    super.onManagerConnected(status);
-                    break;
-                }
-            }
-
-        }
-    };
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,13 +73,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (OpenCVLoader.initDebug()) {
-            Log.d(TAG, "Open CV is installed");
-            baseLoaderCallback.onManagerConnected(BaseLoaderCallback.SUCCESS);
-        } else {
-            Log.d(TAG, "Open CV is not installed");
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_8, this, baseLoaderCallback);
-        }
     }
 
     public void navToSymptomActivity(View view) {
