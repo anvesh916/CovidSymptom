@@ -328,7 +328,7 @@ public class MainActivity extends AppCompatActivity {
             super.onReceiveResult(resultCode, resultData);
             if (resultCode == RESULT_OK && resultData != null) {
                 respirationRate = Integer.parseInt(resultData.getString("Result"));
-                setParametersForRR("Recorded respiration " + respirationRate, false);
+                setParametersForRR("Recorded peaks " + respirationRate, false);
             } else if (resultCode == RESULT_CANCELED) {
                 stopService(respirationService);
                 setParametersForRR("Respiration Rate is " + respirationRate, true);
