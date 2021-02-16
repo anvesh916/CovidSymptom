@@ -14,3 +14,8 @@
 .cxx
 local.properties
 /OpenCV412/
+/.project
+/.settings/org.eclipse.buildship.core.prefs
+/app/.classpath
+/app/.project
+/app/.settings/org.eclipse.buildship.core.prefs

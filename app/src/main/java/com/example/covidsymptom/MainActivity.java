@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     public int heartRate;
 
     HeartRateTask hrt;
+    int recordNumber;
 
 
     BaseLoaderCallback baseLoaderCallback = new BaseLoaderCallback(this) {
@@ -73,13 +74,16 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         symptomActivity = new Intent(this, SymptomActivity.class);
+        dataBaseHelper = new DataBaseHelper(MainActivity.this);
+        // DB Data length
+        recordNumber = dataBaseHelper.getRecordCount() + 1;
 
+        TextView record = findViewById(R.id.recordCount);
+        record.setText("Records " + (recordNumber - 1));
         // Respiratory rate service
         respirationService = new Intent(getApplicationContext(), RespiratoryRateSrv.class);
         ResultReceiver resultReceiver = new RespirationResultReceiver(null);
         respirationService.putExtra(Intent.EXTRA_RESULT_RECEIVER, resultReceiver);
-
-        dataBaseHelper = new DataBaseHelper(MainActivity.this);
 
     }
 
@@ -97,9 +101,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void navToSymptomActivity(View view) {
+        symptomActivity.putExtra("recordCount", recordNumber);
+
         startActivity(symptomActivity);
     }
-
 
 
     private void preInvokeCamera() {
@@ -220,8 +225,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                     totalred = 0;
                     // Center box of the image
-                    for (int x = (w - 2* imgSize); x < w - imgSize; x++)
-                        for (int y = (h - 2 *imgSize); y < h - imgSize; y++) {
+                    for (int x = (w - 2 * imgSize); x < w - imgSize; x++)
+                        for (int y = (h - 2 * imgSize); y < h - imgSize; y++) {
                             totalred += Color.red(bitmap.getPixel(x, y));
                         }
 
@@ -247,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         protected void onProgressUpdate(Integer progress, int frames) {
-            setParametersForHR("Processing frames " + Integer.toString(progress) + "/" + frames , false);
+            setParametersForHR("Processing frames " + Integer.toString(progress) + "/" + frames, false);
         }
 
         protected void onPostExecute(Integer result) {
@@ -295,11 +300,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void uploadSigns(View view) {
-        SymptomModel allSymptoms = dataBaseHelper.getByID(1);
+        SymptomModel allSymptoms = dataBaseHelper.getByID(recordNumber);
         allSymptoms.setRESP_RATE(respirationRate);
         allSymptoms.setHEART_RATE(heartRate);
-        if (dataBaseHelper.addOne(allSymptoms, 1)) {
-            Toast.makeText(this, "Saved to DB",
+        if (dataBaseHelper.addOne(allSymptoms, recordNumber)) {
+            Toast.makeText(this, "Data saved to DB Record " + recordNumber ,
                     Toast.LENGTH_SHORT).show();
         }
     }

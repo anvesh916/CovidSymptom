@@ -56,6 +56,22 @@ public class DataBaseHelper extends SQLiteOpenHelper {
 
     }
 
+    public int getRecordCount() {
+        int count;
+
+        String query = "SELECT COUNT(*) AS COUNT FROM " + COVID_TABLE_NAME;
+
+        try {
+            SQLiteDatabase db = this.getReadableDatabase();
+            Cursor cur = db.rawQuery(query, null);
+            cur.moveToFirst();
+            count = cur.getInt(0);
+        } catch (Exception e) {
+            return 0;
+        }
+        return count;
+    }
+
     public boolean addOne(SymptomModel model, int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();

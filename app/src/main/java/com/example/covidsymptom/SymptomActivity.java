@@ -1,6 +1,7 @@
 package com.example.covidsymptom;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -8,6 +9,7 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -32,14 +34,17 @@ public class SymptomActivity extends AppCompatActivity implements AdapterView.On
     private Spinner spinner;
     private int spinnerPosition;
     private ImageButton deleteButton;
-    private SymptomModel symptom;
     private DataBaseHelper dataBaseHelper;
     private ListView signList;
+    private int recordNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_symptom);
+
+        recordNumber = this.getIntent().getIntExtra("recordCount", 0);
+
 
         spinner = findViewById(R.id.spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -93,7 +98,7 @@ public class SymptomActivity extends AppCompatActivity implements AdapterView.On
     }
 
     public void uploadSymptoms(View view) {
-        SymptomModel symptomModel = dataBaseHelper.getByID(1);
+        SymptomModel symptomModel = dataBaseHelper.getByID(recordNumber);
         symptomModel.setNAUSEA(symptoms.get(NAUSEA));
         symptomModel.setHEAD_ACHE(symptoms.get(HEADACHE));
         symptomModel.setDIARRHEA(symptoms.get(DIARRHEA));
@@ -104,14 +109,14 @@ public class SymptomActivity extends AppCompatActivity implements AdapterView.On
         symptomModel.setCOUGH(symptoms.get(COUGH));
         symptomModel.setSHORT_BREATH(symptoms.get(SHORTNESS_OF_BREATH));
         symptomModel.setFEEL_TIRED(symptoms.get(FEELING_TIRED));
-        dataBaseHelper.addOne(symptomModel, 1);
-
+        dataBaseHelper.addOne(symptomModel, recordNumber);
+        Toast.makeText(this, "Data saved to DB !! Record " + recordNumber, Toast.LENGTH_LONG).show();
         this.updateList();
     }
 
     private void updateList() {
 
-        SymptomModel allSymptoms = dataBaseHelper.getByID(1);
+        SymptomModel allSymptoms = dataBaseHelper.getByID(recordNumber);
         // Add in the spinner list
         symptoms.put(NAUSEA, allSymptoms.getNAUSEA());
         symptoms.put(HEADACHE, allSymptoms.getHEAD_ACHE());
