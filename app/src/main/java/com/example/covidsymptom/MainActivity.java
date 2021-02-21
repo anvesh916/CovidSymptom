@@ -73,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        displayCount();
     }
 
     public void navToSymptomActivity(View view) {
@@ -282,6 +284,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Data saved to DB Record " + recordNumber ,
                     Toast.LENGTH_SHORT).show();
         }
+        displayCount();
     }
 
 
@@ -289,6 +292,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         stopService(respirationService);
         super.onDestroy();
+    }
+
+    protected void displayCount() {
+        TextView record = findViewById(R.id.recordCount);
+        record.setText("Records " + dataBaseHelper.getRecordCount());
     }
 
 
